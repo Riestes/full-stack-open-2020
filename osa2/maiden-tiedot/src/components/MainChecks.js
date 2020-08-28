@@ -3,7 +3,7 @@ import React from 'react'
 import CountryData from './CountryData'
 import CountriesList from './CountriesList'
 
-const Countries = ({ filteredCountries }) => {
+const MainChecks = ({ filteredCountries }) => {
 
   if (filteredCountries.length > 10) {
     return <p>Too many matches, specify another filter</p>
@@ -19,4 +19,4 @@ const Countries = ({ filteredCountries }) => {
   }
 }
 
-export default Countries
+export default MainChecks
