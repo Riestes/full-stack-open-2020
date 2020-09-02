@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Countries from './MainChecks'
+import MainChecks from './MainChecks'
 
 const Filter = ({ countries, searchFilter, handleFilterSearch }) => {
 
@@ -14,7 +14,7 @@ const Filter = ({ countries, searchFilter, handleFilterSearch }) => {
             <form>
                 <div>Find countries <input onChange={handleFilterSearch}></input></div>
             </form>
-            <Countries
+            <MainChecks
                 filteredCountries={filteredCountries()} />
         </div>
     )
