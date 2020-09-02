@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Weather from './Weather'
+
 const CountryData = ({ singleCountry }) => {
 
     return (
@@ -16,6 +18,7 @@ const CountryData = ({ singleCountry }) => {
                 )}
             </ul>
             <img src={singleCountry.flag} alt="Flag" height="100"></img>
+            <Weather singleCountry={singleCountry}/>
         </div>
     )
 }

@@ -8,9 +8,11 @@ function App() {
   const [countries, setCountries] = useState([])
   const [searchFilter, setSearchFilter] = useState('')
 
+  const url = 'https://restcountries.eu/rest/v2/all'
+
   useEffect(() => {
     axios
-      .get('https://restcountries.eu/rest/v2/all')
+      .get(url)
       .then(response => {
         setCountries(response.data)
       })
