@@ -41,7 +41,6 @@ const App = () => {
     }
 
     const duplicateName = persons.some(person => person.name === newName)
-    console.log(duplicateName)
 
     // CHECK DUPLICATE NAMES
     if (duplicateName) {
