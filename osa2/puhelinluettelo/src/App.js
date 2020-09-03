@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'
 
-import AddPerson from './components/AddPerson';
-import PersonsListWithFilter from './components/PersonsListWithFilter';
+//import AddPerson from './components/AddPerson';
+//import PersonsListWithFilter from './components/PersonsListWithFilter';
+import PersonsList from './components/PersonsList'
+
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,15 +12,76 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
 
-  // Get beginning persons data from server p3001 (db.json)
-  // and add to persons[]
+  // GET ALL PERSONS
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+      .catch(error => {
+        console.log(error)
       })
   }, [])
+
+  const searchPerson = () => {
+    if (search === '')
+      return persons
+    else
+      return persons.filter(person =>
+        person.name.toLowerCase().includes(search.toLowerCase()))
+  }
+
+  // ADD PERSON
+  const addPerson = (event) => {
+    event.preventDefault()
+    const personObject = {
+      name: newName,
+      number: newNumber
+    }
+
+    const duplicateName = persons.some(person => person.name === newName)
+    console.log(duplicateName)
+
+    // CHECK DUPLICATE NAMES
+    if (duplicateName) {
+      const person = persons.find(person => person.name === newName)
+      const personWithNewNum = { ...person, number: newNumber }
+      const id = person.id
+
+      if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
+        personService
+          .update(id, personWithNewNum)
+          .then((returnedPerson) => {
+            setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+    } else {
+      // IF NO DUPLICATE NAMES, ADD NEW PERSON
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  }
+
+  const handleDelete = id => {
+    const person = persons.find(person => person.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -35,21 +98,27 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <h2>add a new</h2>
-      <AddPerson
-        setPersons={setPersons}
-        handleNameChange={handleNameChange}
-        handleNumChange={handleNumChange}
-        persons={persons}
-        newName={newName}
-        newNumber={newNumber}
-      />
+      <form>
+        <div>filter shown with <input onChange={handleSearchChange}></input></div>
+      </form>
+      <h2>Add a new</h2>
+      <form onSubmit={addPerson}>
+        <div>name: <input value={newName} onChange={handleNameChange} /></div>
+        <div>number: <input value={newNumber} onChange={handleNumChange} /></div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
       <h2>Numbers</h2>
-      <PersonsListWithFilter
-        handleSearchChange={handleSearchChange}
-        search={search}
-        persons={persons}
-      />
+      <ul>
+        {searchPerson().map((person, i) =>
+          <PersonsList
+            key={i}
+            person={person}
+            handleDelete={handleDelete}
+          />
+        )}
+      </ul>
     </div>
   )
 }

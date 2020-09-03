@@ -4,8 +4,6 @@ import PersonsList from './PersonsList'
 
 const PersonsListWithFilter = (props) => {
 
-    // Compare array names to your search input to find all similarities
-    // If search field is empty, return list of all persons
     const searchPerson = () => {
         if (props.search === '')
             return props.persons
@@ -14,7 +12,6 @@ const PersonsListWithFilter = (props) => {
                 person.name.toLowerCase().includes(props.search.toLowerCase()))
     }
 
-    // Returns filter input with the person list
     return (
         <div>
             <form>
